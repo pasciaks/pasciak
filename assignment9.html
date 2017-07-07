@@ -1,0 +1,364 @@
+<!DOCTYPE html >
+
+    <html lang="en">
+
+<head>
+
+    <title>Animation</title>
+
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- include external css for my bootstrap -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- include external js source files for jquery -->
+    <script src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+
+    <!-- include external js source files for bootstrap -->
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- include external css for my styles -->
+    <link rel="stylesheet" type="text/css" href="./css/main_style.css">
+
+    <script src="./js/ion.sound.min.js"></script>
+
+    <script>
+        /*
+           
+          */
+
+        function distance(a, b, c, d) {
+            var resultValue = Math.sqrt((Math.abs(a - c) ^ 2) + (Math.abs(b - d) ^ 2));
+            return resultValue;
+        }
+
+        function randRange(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function myTileObject(x, y, w, h, imgUrl, tx, ty, dx, dy) {
+
+            this.x = Math.floor(x);
+            this.y = Math.floor(y);
+            this.w = w;
+            this.h = h;
+
+            this.imgUrl = imgUrl || "./images/me-dam.jpg";
+            this.tx = tx;
+            this.ty = ty;
+            this.dx = dx;
+            this.dy = dy;
+
+            this.angle = 0;
+
+            this.color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            this.alive = true;
+
+            this.lastTimeMoved = (new Date()).getTime();
+            this.born = (new Date()).getTime();
+
+            this.angle = 0;
+
+            return this;
+        }
+
+        myTileObject.prototype.move = function(canvas) {
+            this.x += this.dx;
+            this.y += this.dy;
+
+            if (this.x < 0) {
+                this.dx *= -1;
+                this.x += this.dx;
+            }
+            if (this.y < 0) {
+                this.dy *= -1;
+                this.y += this.dy;
+            }
+
+            /*global canvas*/
+            if (this.x + this.w > canvas.width) {
+                this.dx *= -1;
+                this.x += this.dx;
+            }
+            if (this.y + this.h > canvas.height) {
+                this.dy *= -1;
+                this.y += this.dy;
+            }
+
+            this.lastTimeMoved = (new Date()).getTime();
+        };
+
+        myTileObject.prototype.moveObject = function(dx, dy) {
+            this.x += dx;
+            this.y += dy;
+            this.lastTimeMoved = (new Date()).getTime();
+        };
+
+        myTileObject.prototype.draw = function(currentTime, ctx) {
+
+
+
+            if (this.angle > 0) {
+                var tx = this.locationX + this.sizeX / 2;
+                var ty = this.locationY + this.sizeY / 2;
+                ctx.save();
+                ctx.translate(tx, ty);
+                ctx.rotate(this.angle);
+                ctx.translate(-tx, -ty);
+            }
+
+
+
+
+            ctx.fillStyle = this.color;
+            ctx.fillRect(this.x, this.y, this.w, this.h);
+
+
+            if (this.angle > 0) {
+                ctx.restore();
+            }
+
+
+        }
+
+        /*global $*/
+        $(document).ready(function() {
+
+            $("#menu").load("menu.html");
+
+            $('#myCanvas').click(function(e) {
+
+                var offsetX = $('#myCanvas').offset().left;
+                var offsetY = $('#myCanvas').offset().top;
+
+                // $('#rectpos').html(Math.floor(offsetX) + ":" + Math.floor(offsetY));
+
+                mouseClicked(e.pageX - offsetX, e.pageY - offsetY);
+            });
+
+            var SOUND = 0;
+
+            $('#soundonoff').click(function(e) {
+
+                SOUND = 1 - SOUND;
+
+                if (SOUND) $('#soundonoff').val("SOUND is ON");
+                if (!SOUND) $('#soundonoff').val("SOUND is OFF");
+
+            });
+
+            ion.sound({
+                sounds: [{
+                    name: "bell_ring"
+                }, {
+                    name: "door_bump"
+                }, {
+                    name: "door_bell"
+                }, {
+                    name: "pop_cork",
+                    volume: 0.5
+                }, {
+                    name: "metal_plate_2",
+                    volume: 0.5
+                }, {
+                    name: "snap",
+                    volume: 0.5,
+                    preload: true
+                }, {
+                    name: "tap",
+                    volume: 0.5,
+                    preload: true
+                }],
+                volume: 0.4,
+                path: "sounds/",
+                multiplay: true,
+                preload: true
+            });
+
+            function playit(it) {
+
+                if (SOUND) ion.sound.play(it);
+
+            }
+
+            /*global ion*/
+            playit("tap");
+
+
+            var timer = window.setInterval(callAnimation, 30);
+            var canvas = document.getElementById('myCanvas');
+            var context = canvas.getContext('2d');
+            var objects = [];
+            var obj;
+            var inc = 1.0;
+
+            createObjects(3, objects);
+
+            function pastelColors() {
+                ////'#'+Math.floor(Math.random()*16777215).toString(16);
+                var r = (Math.round(Math.random() * 127) + 127).toString(16);
+                var g = (Math.round(Math.random() * 127) + 127).toString(16);
+                var b = (Math.round(Math.random() * 127) + 127).toString(16);
+
+                //france paris
+                //var r=['red','white','blue'];return r[randRange(0,2)];
+
+                return '#' + r + g + b;
+            }
+
+            var timer2 = window.setInterval(newBox, 7000);
+
+            function countThem(objects) {
+
+                var c = 0;
+
+                for (var i = 0; i < objects.length; i++) {
+                    if (objects[i].alive == true) c++;
+                }
+
+                $('#objectcount').html("There are " + c + " objects.");
+
+                return c;
+
+            }
+
+
+function checkStatus (){
+    
+                if (countThem(objects) > 9) { if (timer2) window.clearInterval(timer2); }
+                
+                if (countThem(objects) == 0) { alert("Winner!"); createObjects(5,objects); }
+                
+}
+            function newBox() {
+                createObjects(1, objects);
+                playit("door_bell");
+
+            }
+
+            function createObjects(n, arr) {
+
+                var randomSize;
+
+                var sx, sy; //start location
+
+                sx = canvas.width / 2;
+                sy = canvas.height / 2;
+
+                for (var i = 0; i < n; i++) {
+
+                    randomSize = randRange(5, 15);
+
+                    obj = new myTileObject(sx - randomSize * 5 / 2, sy - randomSize * 5 / 2, randomSize * 5, randomSize * 5, "", 0, 0, randRange(-2, 2), randRange(-2, 2));
+
+                    arr.push(obj);
+
+                }
+
+
+                checkStatus();
+                    
+        
+
+            }
+
+            window.requestAnimFrame = (function(callback) {
+                return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) {
+                    window.setTimeout(callback, 1000 / 60);
+                };
+            })();
+
+            /*global requestAnimFrame */
+            function callAnimation() {
+                requestAnimFrame(function() {
+                    animate(canvas, context);
+                });
+            }
+
+            function mouseClicked(mx, my) {
+                //$('#mousepos').html(Math.floor(mx) + ":" + Math.floor(my));
+
+                //createObjects(5,objects);
+
+                var explode = false;
+
+                for (var i = 0; i < objects.length; i++) {
+
+                    if (mx > objects[i].x) {
+                        if (mx < objects[i].x + objects[i].w) {
+                            if (my > objects[i].y) {
+                                if (my < objects[i].y + objects[i].h) {
+                                    objects[i].color = pastelColors();
+
+                                    inc += 0.025;
+
+                                    //new direction
+
+                                    objects[i].dx = (2 * inc - Math.random() * 4 * inc);
+                                    objects[i].dy = (2 * inc - Math.random() * 4 * inc);
+
+                                    objects[i].w -= 5;
+                                    objects[i].h -= 5;
+
+                                    playit("tap");
+
+                                    if (objects[i].w < 25) {
+                                        if (objects[i].h < 25) {
+                                            objects[i].alive = false;
+                                            explode = true;
+                                            playit("metal_plate_2");
+                                            checkStatus();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                //if (explode) createObjects(15,objects);
+
+            }
+
+            function animate(canvas, ctx) {
+                ctx.fillStyle = 'red';
+
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.clearRect(2, 2, canvas.width - 4, canvas.height - 4);
+
+                var obj;
+
+                for (var j = 0; j < objects.length; j++) {
+                    obj = objects[j];
+                    if (obj.alive) {
+                        obj.move(canvas); //pass canvas referene so we can check width
+                        obj.draw(Date.now(), ctx);
+                    }
+                }
+            }
+
+        });
+    </script>
+
+</head>
+
+<body>
+
+    <!-- menu loads here when document is ready -->
+    <div id="menu"></div>
+
+    <canvas width="240" height="240" id="myCanvas" style="border:1px dotted red;"></canvas>
+
+    <div hidden id="mousepos"></div>
+
+    <div hidden id="rectpos"></div>
+
+    <div id="objectcount"></div>
+
+    <input type="button" value="SOUND is OFF" id="soundonoff" />
+
+</body>
+
+</html>

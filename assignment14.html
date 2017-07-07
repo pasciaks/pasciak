@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <title>GAME - SCRAMBLED - ASSIGNMENT 14</title>
+
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- include external css for my bootstrap -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <!-- include external js source files for jquery -->
+  <script src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+
+  <!-- include external js source files for bootstrap -->
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <!-- include external css for my styles -->
+  <link rel="stylesheet" type="text/css" href="./css/main_style.css">
+
+  <script>
+    /*global $*/
+    $(document).ready(function() {
+
+      $("#menu").load("menu.html");
+
+      // alert("random number between 2 and 99 " + randRange(2,99));
+
+      // alert("distance between 2,2 and 13,3 " + distance(2,2,13,3));
+
+    });
+  </script>
+
+</head>
+
+<body>
+
+  <!-- menu loads here when document is ready -->
+  <div id="menu"></div>
+
+  <H2>
+
+    <a href="http://publicpuzzle.com">Play</a>
+
+  </H2>
+  
+  <div id="scrambled">SCRAMBLED WORDS</div>Real people, real-time, real-game - Stop playing with yourself, play with the world at publicpuzzle.com
+
+  <hr>
+
+  <p>SCRAMBLED words edition. </p>
+  
+  <p>
+    In this game, all players get the same random set of letters.  They then drag and drop the letters to build a word.
+    <br /> If the word is a valid dictionary word (text wordlist of 100,000+ English Words), they get 3 points for each letter in the word.
+    <br /> Words already found using the current scrambled letters don't count.
+    <br /> Each time a word is found, the player name and his/her score is shown.
+    <br /> A high score is kept for the highest score in current live game.
+    <br /> Uses the graphics handling library PIXI js.
+    <br /> Uses the sound library ion sound.
+    <br /> Uses Node.js and Socket.io for multiplayer capability in client/server framework.
+
+  </p>  
+
+  <p>COMMENTS: <br />I did not get to play this game in multi-player mode but I can see that it would be fun that way. Here is a way to play the game asynchronously
+    <br /> - When a player goes in, let them play - and record words and time words were made (done)
+    <br /> - Another player comes in and plays - but computer plays the recorded game (remember you only need words and time) or player 1. (done)
+    <br /> - Have the computer show what Player 1 is doing (recorded game play) while you try to beat them (done)
+    <br /> - Give option of playing random player or high score. (done)
+  </p>
+  
+  <p>
+    - BUG FIX: WEB-gl not supported, fall-back to canvas renderer (done)
+    <br /> - PROGRESS: Game theory- find a 3 letter word for power up #1 (done)
+    <br /> - PROGRESS: Game theory- find a 4+ letter word for power up #2 (done)
+    <br />    
+    
+  </p>
+
+
+
+
+
+</body>
+
+</html>
+  

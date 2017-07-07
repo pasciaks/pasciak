@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <title>Canvas Animation</title>
+
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- include external css for my bootstrap -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <!-- include external js source files for jquery -->
+  <script src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+
+  <!-- include external js source files for bootstrap -->
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <!-- include external css for my styles -->
+  <link rel="stylesheet" type="text/css" href="./css/main_style.css">
+
+  <script>
+  
+  /*
+    
+    COP4813  Assignment 9 - Animation
+    
+    Objectives
+    
+    Learn how to animate simple objects in Javascript.
+    
+    Supports Outcome 4
+    
+    4 – Ability to use client side scripting languages (DHTML, Javascript) to add interactivity to web sites.
+    
+    Assignment
+    
+    Part 1 - In this assignment you will animate an object on a canvas. You may animate any type of object (image or an object drawn on the screen). 
+    The object will bounce around the screen - in this case start the object animation  diagonally across the screen. The angle does not matter, 
+    if you increment x and y locations by same amount that will be 45 degrees - different values will give you different amounts. 
+    
+        The object should be bounded (just use a square or rectangle). The object should remain in the bounded area- you can keep it inside the area - 
+        by simulating a bounce or send it off in another random direction, or simply have it stop - or choose a new random angle (will require a little 
+        bit of math).
+    
+        You can also have the animation follow a path by using a calculated set of coordinates (which you know how to do from the equation assignment).
+    
+    Part 2 - The object will respond to a mouse click by doing something. You can have the object change direction, color, image, any visible response 
+    to a mouse click event, my favorite was ones that exploded or do some other silly effect.
+    
+        Information
+    
+        I have lots of lectures on various methods of animation. I recommend using timer based animation as outlined in my animation series.
+    
+        In addition to my lectures a tutorial that covers the bouncing ball example is at 
+        http://sixrevisions.com/html/bouncing-a-ball-around-with-html5-and-javascript/ 
+    
+    Estimated Completion Time
+    
+    5-10 hours - you can have a lot of fun with this, make sure you understand the Javascript code involved in this project.
+  
+  
+  */
+  
+     /*global $*/
+    $(document).ready(function() {
+
+        $("#menu").load("menu.html");
+        
+$('#myCanvas').click(function(e){
+    var offsetX = $('#myCanvas').offset().left;
+    var offsetY = $('#myCanvas').offset().top;
+    
+   mouseClicked(e.pageX - offsetX , e.pageY - offsetY);
+});    
+
+
+var timer = window.setInterval(callAnimation, 30);
+
+var canvas = document.getElementById('myCanvas');
+var context = canvas.getContext('2d');
+
+window.requestAnimFrame = (function (callback) {
+    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback) {
+        window.setTimeout(callback, 1000 / 60);
+    };
+})();
+
+var step = 2;
+
+var yellowRectangle = {
+    x: 200,
+    y: 200,
+    xstep: 2,
+    ystep: 1,
+    width: 20,
+    height: 20,
+    movement: 'xy',
+    borderWidth: 1,
+    borderColor: 'black',
+    fillColor: 'yellow', 
+    currentColor: 'yellow'
+};
+
+var greenRectangle = 
+ {
+    x: 200,
+    y: 200,
+    xstep: 0,
+    ystep: 1,
+    width: 20,
+    height: 20,
+     movement: 'y',
+    borderWidth: 1,
+    borderColor: 'black',
+    fillColor: 'green', 
+    currentColor: 'green' 
+};
+
+var pinkRectangle = 
+ {
+    x: 150,
+    y: 250,
+    xstep: 1,
+    ystep: 1,
+    width: 20,
+    height: 20,
+    movement: 'xy',
+    borderWidth: 1,
+    borderColor: 'black',
+    fillColor: 'pink', 
+    currentColor: 'pink' 
+};
+
+var rectangles = new Array();
+rectangles[0] = yellowRectangle;
+rectangles[1] = greenRectangle;
+rectangles[2] = pinkRectangle;
+
+
+function drawRectangle(r, c) {
+    c.beginPath();
+    c.rect(r.x, r.y, r.width, r.height);
+    c.fillStyle = r.currentColor;
+    c.fill();
+    c.lineWidth = r.borderWidth;
+    c.strokeStyle = r.borderColor;
+    c.stroke();
+}
+
+function callAnimation() {
+    requestAnimFrame(function () {
+        animate(rectangles, canvas, context);
+    });
+}
+
+function mouseClicked(mx, my)
+{
+    $('#mousepos').html(mx + ":" + my);
+    
+    for (var i=0; i<rectangles.length; i++)
+    {
+        if (pointIsInRectangle(mx, my, rectangles[i]))
+        {
+            $('#mousepos').html('Clicked Rectangle: ' + i);
+            rectangles[i].xstep *= -1;
+            rectangles[i].ystep *= -1;
+        }
+    }  
+}
+
+function animate(r, can, con)
+{
+    con.clearRect(0, 0, can.width, can.height);
+
+    for (var i = 0; i < r.length; i++)
+    {
+        animateSingleRectangle(r[i], r, can, con);
+    }
+}
+
+function animateSingleRectangle(r, ra, can, con)
+{
+    if (r.movement.indexOf('x') != -1) 
+    {
+       if (r.x < 100 || r.x > 300) r.xstep *= -1;
+       r.x += r.xstep;
+    }
+    
+    if (r.movement.indexOf('y') != -1)
+    {
+       if (r.y < 100 || r.y > 300) r.ystep *= -1;
+        r.y += r.ystep;
+    }
+        
+    if (anyCollision(r, ra))  r.currentColor = 'red';
+    
+    drawRectangle(r, con);
+    r.currentColor = r.fillColor;
+}
+
+
+
+function anyCollision(r, ra)
+{
+    for (var i=0; i < ra.length; i++)
+    {
+       if (collision(r, ra[i])) return true;   
+    }
+    return false;
+}
+
+
+function collision(r1, r2)
+{   
+    if (pointIsInRectangle(r1.x, r1.y, r2)) return true;
+    if (pointIsInRectangle(r1.x + r1.width, r1.y, r2)) return true; 
+    if (pointIsInRectangle(r1.x + r1.width, r1.y + r1.height, r2)) return true; 
+    if (pointIsInRectangle(r1.x, r1.y + r1.height, r2)) return true; 
+
+    return false;
+}
+
+function pointIsInRectangle(x, y, r)
+{
+    if (x > r.x && x < r.x + r.width && y > r.y && y < r.y + r.height) return true;
+    return false;
+}
+
+ 
+        
+        
+        
+    
+    });
+  
+  </script>
+
+</head>
+
+<body>
+
+  <!-- menu loads here when document is ready -->
+  <div id="menu"></div>
+  
+  <canvas width="400" height="400" id="myCanvas" style="border:2px solid red;"></canvas>
+  <div id="mousepos"></div>
+  <div id="rectpos"></div>
+  
+</body>
+
+</html>

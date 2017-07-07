@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <title>About</title>
+
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- include external js source files -->
+  <script src="./js/base_code.js"></script>
+
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <script src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <!-- include external css -->
+  <link rel="stylesheet" type="text/css" href="./css/main_style.css">
+
+  <script>
+    /*global $*/
+    $(document).ready(function() {
+
+      $("#menu").load("menu.html");
+
+      console.log("ready...");
+
+      /*global startApplication*/
+      startApplication();
+
+    });
+  </script>
+
+</head>
+
+<body>
+
+  <div id="menu"></div>
+
+  <div class="container">
+
+    <h3>About</h3>    
+    
+
+    <div class="infoBox">
+        <h2>Me</h2>
+        <p>Sheldon is a current Student at Daytona State College.</p>
+        <img id="myImage" alt="Welcome Page Me" src="./images/me-dam.jpg" /><br />
+        <a href="./sheldon-pasciak-resume.pdf" target="_blank">Resume</a><br />
+        <a href="https://www.linkedin.com/in/sheldon-pasciak-51021747?trk=nav_responsive_tab_profile" target="_blank">LinkedIn</a>
+
+    </div>
+
+    <div class="infoBox">
+        <h2>This Site</h2>
+        <p>View the console window for helpful/informative debug console log info about code interaction.</p>
+    </div>    
+    
+  </div>
+
+</body>
+
+</html>

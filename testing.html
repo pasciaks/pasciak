@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <title>About</title>
+
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- include external js source files -->
+  <script src="./js/base_code.js"></script>
+
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <!-- include external css -->
+  <link rel="stylesheet" type="text/css" href="./css/main_style.css">
+
+  <script>
+    /*global $*/
+    $(document).ready(function() {
+
+      $("#menu").load("menu.html");
+
+      console.log("ready...");
+
+      /*global startApplication*/
+      startApplication();
+
+    });
+  </script>
+
+</head>
+
+<body>
+
+  <div id="menu"></div>
+
+  <div class="container">
+
+    <h3>About</h3>   
+    
+  </div>
+
+</body>
+
+</html>

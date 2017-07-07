@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <title>JSON</title>
+
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- include external css for my bootstrap -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <!-- include external js source files for jquery -->
+  <script src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+
+  <!-- include external js source files for bootstrap -->
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <!-- include external css for my styles -->
+  <link rel="stylesheet" type="text/css" href="./css/main_style.css">
+
+  <script>
+  
+    var output = "";
+    
+    /*global $*/
+    $(document).ready(function() {
+
+    $("#menu").load("menu.html");
+    
+    function appendText(str) {
+      output+=str;
+      $('#display').html(output);
+    }
+    
+    function clearText() {
+      output="";
+      $('#display').html(output);
+    }
+
+    function loadDoc(filePath) {
+      
+      clearText();
+      
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          displayData(this.responseText);
+        }
+      };
+      xhttp.open("GET", filePath, true);
+      xhttp.send();
+    }
+    
+    function createJSON() {
+      
+      clearText();
+      
+      var obj = {};
+      obj.employees = [];
+      
+      for (var i=0;i<10;i++) {
+        var emp = {'firstName': 'First ' + i, 'lastName': 'Last ' + i, 'randomScores' : [] };
+        var rr=Math.random()*15; for (var j=0;j<rr;j++) emp.randomScores.push(1+Math.floor(Math.random()*100));
+        obj.employees.push( emp );
+      }
+      
+      appendText("<br />");
+      appendText("Dynamically created JSON object");      
+      appendText("<br />");
+      appendText("Demonstrating creating JSON from an object created with Javascript.");
+      appendText("<br />");
+      
+      appendText(JSON.stringify(obj));
+      
+    }
+
+    function displayData(info) {
+      
+      var i=0;
+      
+      var obj = JSON.parse(info);
+      
+      // array of employess
+      var numberOfEmployees = obj.employees.length;
+      appendText("<table>");
+      appendText("<tr><td>ID</td><td>First Name</td><td>Last Name</td><td>Age</td></tr>");
+      for ( i=0;i<numberOfEmployees;i++) {
+        appendText("<tr><td>Employee # " + i+"</td>");
+        appendText("<td>" + obj.employees[i].firstName + "</td><td>" + obj.employees[i].lastName +"</td><td>" + obj.employees[i].age + "</td></tr>");
+      }
+      appendText("</table>");   
+      
+      appendText("<br />");
+      
+      // array of offices
+      var numberOfOffices = obj.offices.length;
+      appendText("<table>");
+      appendText("<tr><td>ID</td><td>Full Address</td><td>Phone</td></tr>");
+      for ( i=0;i<numberOfOffices;i++) {
+        appendText("<tr><td>Office # " + i+"</td>");
+        appendText("<td>" + obj.offices[i].address + "</td><td>" + obj.offices[i].phone +"</td></tr>");
+      }
+      appendText("</table>");        
+    
+    }     
+    
+    $( "#displayData" ).click(function() {
+      loadDoc("./assignment6.json");
+    });    
+    
+    $( "#create" ).click(function() {
+      createJSON();
+    });
+    
+    loadDoc("./assignment6.json");
+    
+    });
+    
+  </script>
+
+</head>
+
+<body>
+
+  <!-- menu loads here when document is ready -->
+  <div id="menu"></div>
+
+  <div id="display"></div>  
+  
+  <br />
+  
+  <input type="button" id="displayData" value="Show JSON File" />
+  <input type="button" id="create" value="Create JSON from Object" />
+  
+</body>
+
+</html>

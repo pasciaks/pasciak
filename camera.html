@@ -1,0 +1,373 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+<title>
+    PPP - Pasciak's Picture Puzzle
+</title>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+
+
+</head>
+
+
+
+<body>
+
+
+<button id="_moreview" class="btn" onclick="toggleOptions(1)">+</button>
+<button class="btn" onclick="snapImage()">Snap</button>
+<button id="_lessview" class="btn" onclick="toggleOptions(-1)">-</button>
+<button class="btn" onclick="startGameLoop()">START</button>
+
+<video autoplay id="vid" style="display:none;width:640;height:480;"></video>
+
+<br />
+<br />
+<canvas id="canvas" width="640" height="480" style="border:1px solid #d3d3d3;"></canvas>
+<br />
+<br />
+
+<img draggable="true" alt="logo" id="myi" src="http://lostwords.org/images/lwl.png" />
+
+<br />
+
+</body>
+
+<script>
+
+function clone(obj) {
+    var copy;
+
+    // Handle the 3 simple types, and null or undefined
+    if (null == obj || "object" != typeof obj) return obj;
+
+    // Handle Date
+    if (obj instanceof Date) {
+        copy = new Date();
+        copy.setTime(obj.getTime());
+        return copy;
+    }
+
+    // Handle Array
+    if (obj instanceof Array) {
+        copy = [];
+        for (var i = 0, len = obj.length; i < len; i++) {
+            copy[i] = clone(obj[i]);
+        }
+        return copy;
+    }
+
+    // Handle Object
+    if (obj instanceof Object) {
+        copy = {};
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+        }
+        return copy;
+    }
+
+    alert('err ' + JSON.stringify(obj));
+
+    throw new Error("Unable to copy obj! Its type isn't supported.");
+}
+
+var tempTile;
+var dx, dy;
+var shiftx = 10;
+var shifty = 20;
+
+var video = document.querySelector("#vid");
+var canvas = document.querySelector('#canvas');
+var ctx = canvas.getContext('2d');
+ctx.strokeStyle = 'red';
+
+var image;
+var mmax = 64;
+var wide = canvas.width * 2;
+var tall = canvas.height * 2;
+var rows = 16;
+var cols = 16;
+var viewMode = 16;
+var p = [];
+var tiles;
+
+var curX,curY,lastX,lastY,mouseButton=-1;
+
+var tile = {
+
+    color: '#d3d33d',
+    source: {
+        'left': 0,
+        'top': 0,
+        'right': 0,
+        'bottom': 0
+    },
+    destination: {
+        'left': 0,
+        'top': 0,
+        'right': 0,
+        'bottom': 0
+    },
+    row: 0,
+    col: 0,
+    "title": "The Box"
+}
+
+createTiles(cols, rows);
+
+function createTiles(nc, nr) {
+
+    cols = nc;
+    rows = nr;
+
+    tiles = [];
+
+    console.log(cols + "," + rows);
+
+    for (var rr = 0; rr < rows; rr++) {
+        for (var cc = 0; cc < cols; cc++) {
+
+            tempTile = clone(tile);
+            tempTile.row = rr;
+            tempTile.col = cc;
+            tempTile.source.left = cc * (wide / cols);
+            tempTile.source.top = rr * (tall / rows);
+            tempTile.source.right = cc * (wide / cols) + (wide / cols);
+            tempTile.source.bottom = rr * (tall / rows) + (tall / rows);
+
+            tempTile.destination.left = cc * (wide / cols);
+            tempTile.destination.top = rr * (tall / rows);
+            tempTile.destination.right = cc * (wide / cols) + (wide / cols);
+            tempTile.destination.bottom = rr * (tall / rows) + (tall / rows);
+
+            tiles.push(tempTile);
+        }
+    }
+
+}
+
+function snapImage() {
+    image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"); // here is the most important part because if you dont replace you will get a DOM 18 exception.
+    document.querySelector('#myi').src = image;
+}
+
+function toggleOptions(dire) {
+    viewMode += dire;
+    if (viewMode > mmax) viewMode = 0;
+    if (viewMode < 0) viewMode = mmax;
+    createTiles(viewMode, viewMode);
+    p = []; //p.push(1); p.push(3);      
+
+}
+
+function startGameLoop() {
+    window.requestAnimationFrame(gameLoop);
+}
+
+var localMediaStream = null;
+
+var offx = 4;
+var offy = 4;
+
+var onCameraFail = function(e) {
+    console.log('Camera did not work.', e);
+    video = new Image();
+    video.src = "./images/penguin.png";
+};
+
+function gameLoop() {
+
+    ctx.clearRect(0, 0, wide, tall);
+    animateTiles();
+    ctx.fillText(mouseButton,100,100);
+    window.requestAnimationFrame(gameLoop);
+
+}
+
+function pieceHasIndex(iid) {
+    var tt = -111;
+    for (var l = 0; l < p.length; l++) {
+        tt = p[l];
+        if (tt == iid) return true;
+    }
+
+    return false;
+}
+
+function animateTiles() {
+
+    for (var rr = 0; rr < rows; rr++) {
+
+        for (var cc = 0; cc < cols; cc++) {
+
+            dx = 5 - Math.random() * 10;
+            dy = 5 - Math.random() * 10;
+
+            dx = dx / 10;
+            dy = dy / 10;
+
+            tempTile = tiles[rr * cols + cc];
+
+            if (pieceHasIndex(rr * cols + cc)) {
+                tempTile.destination.left = tempTile.source.left;
+                tempTile.destination.right = tempTile.source.right;
+                tempTile.destination.top = tempTile.source.top;
+                tempTile.destination.bottom = tempTile.source.bottom;
+                tempTile.color='green';
+            } else {
+                tempTile.destination.left += dx;
+                tempTile.destination.right += dx;
+                tempTile.destination.top += dy;
+                tempTile.destination.bottom += dy;
+            }
+
+            ctx.drawImage(video,
+                tempTile.source.left,
+                tempTile.source.top,
+                tempTile.source.right - tempTile.source.left,
+                tempTile.source.bottom - tempTile.source.top,
+                tempTile.destination.left,
+                tempTile.destination.top,
+                tempTile.destination.right - tempTile.destination.left,
+                tempTile.destination.bottom - tempTile.destination.top
+            );
+
+            ctx.strokeStyle = tempTile.color;
+
+            ctx.strokeRect(tempTile.destination.left,
+                tempTile.destination.top,
+                tempTile.destination.right - tempTile.destination.left,
+                tempTile.destination.bottom - tempTile.destination.top);
+
+
+        }
+    }
+
+    if (p) {
+        var indd = 0;
+        for (var i = 0; i < p.length; i++) {
+            if (p[i] < tiles.length) {
+                indd = p[i];
+                tempTile = tiles[indd];
+                tempTile.destination.left = tempTile.source.left;
+                tempTile.destination.right = tempTile.source.right;
+                tempTile.destination.top = tempTile.source.top;
+                tempTile.destination.bottom = tempTile.source.bottom;
+            }
+        }
+    }
+
+    if (Math.random() * 100 > 82) p.push(Math.floor(Math.random() * tiles.length));
+
+}
+
+ var
+  stateMap = {
+    max_z_index: 1,
+    zoom_num: 1000,
+    px_drag_top: undefined,
+    px_drag_left: undefined
+  },
+      onZoomstart, onZoommove, onZoomend;
+  onZoomstart = function(event) {
+    if (globalZoom !== 1.0) return;
+    isZooming = true;
+    // sizeToZoom();
+  };
+  onZoommove = function(event) {
+    if (globalZoom !== 1.0) return;
+    //TODO pinch zoom disabled
+    stateMap.zoom_num += event.px_delta_zoom || 0;
+    //     if (stateMap.zoom_num < (1000)) tileSize -= 1;
+    //     if (stateMap.zoom_num > (1000)) tileSize += 1;
+    //     if (tileSize < minZoom) tileSize = minZoom;
+    //     if (tileSize > maxZoom) tileSize = maxZoom;
+    stateMap.zoom_num = 1000;
+  };
+  onZoomend = function(event) {
+    if (globalZoom !== 1.0) return;
+    isZooming = true;
+    // sizeToZoom();
+    //     if (tileSize < minZoom) tileSize = minZoom;
+    //     if (tileSize > maxZoom) tileSize = maxZoom;
+    stateMap.zoom_num = 1000;
+  };
+  var onDragstart, onDragmove, onDragend, onTap;
+  onDragstart = function(event) {
+ 
+    p = $("#canvas");
+    offset = p.offset();
+    mouseButton = 1;
+    curX = event.px_current_x - offset.left;
+    curY = event.px_current_y - offset.top;
+  
+  };
+  onDragmove = function(event) {
+   
+    p = $("#canvas");
+    offset = p.offset();
+    mouseButton = 2;
+    curX = event.px_current_x - offset.left;
+    curY = event.px_current_y - offset.top;
+    
+  };
+  onDragend = function(event) {
+   
+    p = $("#canvas");
+    offset = p.offset();
+    mouseButton = 0;
+    curX = event.px_current_x - offset.left;
+    curY = event.px_current_y - offset.top;
+    
+  };
+  onTap = function(event) {
+  	  
+  	  alert('tap' + JSON.stringify(event));
+  
+    p = $("#canvas");
+    offset = p.offset();
+    mouseButton = 1;
+    curX = event.px_current_x - offset.left;
+    curY = event.px_current_y - offset.top;
+    
+    return false; 
+  };
+  
+  $('#canvas')
+    .bind('uheldstart.uheldd', onDragstart)
+    .bind('uheldmove.uheldd', onDragmove)
+    .bind('uheldtap.uheldd', onTap)
+    .bind('uheldend.uheldd', onDragend)
+    .bind('utap.utap', onTap)
+    .bind('udragstart.udrag', onDragstart)
+    .bind('udragmove.udrag', onDragmove)
+    .bind('udragend.udrag', onDragend)
+    .bind('uzoomstart', onZoomstart)
+    .bind('uzoommove', onZoommove)
+    .bind('uzoomend', onZoomend);
+    
+  //canvas
+
+/*global navigator*/
+navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+window.URL = window.URL || window.webkitURL;
+navigator.getUserMedia({
+    video: true
+}, function(stream) {
+    video.src = window.URL.createObjectURL(stream);
+    localMediaStream = stream;
+}, onCameraFail);
+
+
+//autostart
+window.requestAnimationFrame(gameLoop);
+</script>
+
+</html>

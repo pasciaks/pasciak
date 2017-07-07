@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <title>Drag and Drop</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- include external css for my bootstrap -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <!-- include external js source files for jquery -->
+  <script src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+  <!-- include external js source files for jquery -->
+  <script src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>  
+  <!-- include external js source files for bootstrap -->
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <style>
+
+  .drop {
+      float: left;
+      width: 120px;
+      height: 120px;
+      background-color: #f3f3f3;
+      top:100px;
+  }
+  
+  table, th , td  {
+      border: 1px solid grey;
+      border-collapse: collapse;
+      padding: 5px;
+  }
+  table tr:nth-child(odd) {
+      background-color: #f1f1f1;
+  }
+  table tr:nth-child(even) {
+      background-color: #ffffff;
+  }
+    
+  img {
+    border: 1px solid green;
+  }
+    
+  </style>
+
+  <script>
+  
+    /*global $*/
+    
+    $(document).ready(function() {
+      
+      var slot=[];
+      var slotsTaken=0;
+      var theDeckOfCards = [];
+      var images=[];
+      var currentCard=0;
+
+        function createCards() {
+
+        var cards = [ 'ace','two','three','four','five','six','seven','eight','nine','ten','jack','queen','king'];
+        var suits = [ 'clubs','spades','hearts','diamonds' ];             
+          
+          var cardName;
+          var cardPartName;
+     
+          for (var i=0;i<suits.length;i++) {
+            for (var j=0;j<cards.length;j++) {
+              
+              var img = document.createElement("img");
+              
+              cardPartName=(j+1).toString();
+              
+              if (cardPartName.length==1) cardPartName="0"+cardPartName;
+              
+              cardName=suits[i].charAt(0)+cardPartName;
+              
+              img.src = './images/cardback.png';
+              
+              console.log(img.src);
+              
+              img.id = cards[j] + '-' + suits[i];
+              
+              img.style="position:absolute;left:300px;top:300px;border:0px solid blue;";
+              
+              img.width=75;
+              
+              img.height=100;
+       
+              console.log("'" + img.id + "'   " + img.src);
+              
+              document.body.appendChild(img);
+              
+              images[img.id] = './images/' + cardName + ".png";
+              
+              $('#'+img.id).draggable();
+              
+              $('#'+img.id).fadeOut(Math.random()*150);
+            
+              theDeckOfCards.push(img);
+          
+            }
+          }
+          
+          shuffle(theDeckOfCards);
+  
+        }
+
+      init();
+      
+      createCards();
+      
+      $("#menu").load("menu.html");
+
+      $('#deal').click(function() {
+        dealCard();
+      });
+
+      function init() {
+        
+        $('.drop').droppable({
+          drop: handleDropEvent
+        });
+
+      }
+      
+      function shuffle(a) {
+          var j, x, i;
+          for (i = a.length; i; i--) {
+              j = Math.floor(Math.random() * i);
+              x = a[i - 1];
+              a[i - 1] = a[j];
+              a[j] = x;
+          }
+      }      
+
+      function dealCard() {
+
+        $('#deal').fadeOut(0);
+        
+        $('#drop').html('Drag a card or deal another.');
+        
+        if (currentCard>5) $('#drop').html('Drag a Card, you have no more deals left.');
+        
+        //var randomIndex=Math.floor(Math.random()*52);
+        
+        $('#'+theDeckOfCards[currentCard].id).css("left",100+currentCard*75);
+        $('#'+theDeckOfCards[currentCard].id).fadeIn(500);
+        
+        currentCard++;
+        
+        if (currentCard<7) $('#deal').delay(150).fadeIn(150);
+        
+      }
+
+      function handleDropEvent(event, ui) {
+        
+        //console.log(this.id);
+        
+        var draggable = ui.draggable;
+        
+        if (slot[this.id]==null) {
+          
+          //slot available
+          
+          slot[this.id]=draggable.attr('id');
+          $('#'+draggable.attr('id')).draggable( 'disable' );
+          document.getElementById(draggable.attr('id')).src=images[ draggable.attr('id') ];
+          $('#drop').html('The card with ID "' + draggable.attr('id') + '" was dropped into slot ID ' + this.id );
+          
+          slotsTaken++; if (slotsTaken>=5)  $('#drop').html($('#drop').html() + '<br /><br />Game Over!');
+          
+        } else {
+          
+          //slot taken
+          
+          $('#drop').html('Slot Already Used!'); if (slotsTaken>=5)  $('#drop').html($('#drop').html() + '<br /><br />Game Over!');
+          
+          $('#'+draggable.attr('id')).css("top", 300+Math.random()*10*10 + "px");
+          $('#'+draggable.attr('id')).css("left",300+Math.random()*20*10 + "px");
+
+        }
+        
+      }
+      
+    });
+    
+  </script>
+
+</head>
+
+<body>
+
+  <!-- menu loads here when document is ready -->
+  <div id="menu"></div>
+  
+
+  <table>
+  <tr>
+  <td><div id='0' class='drop'>Card</div></td> 
+  <td><div id='1' class='drop'>Card</div></td> 
+  <td><div id='2' class='drop'>Card</div></td> 
+  <td><div id='3' class='drop'>Card</div></td> 
+  <td><div id='4' class='drop'>Card</div></td> 
+  </tr>
+  </table>
+  
+  <br />  
+  <br />
+  <br />
+  
+      <div id='drop' >Click Deal up to 7 times, then drag a card to one of the 5 available locations.</div>
+
+  <br />
+  <br />
+       
+  <input type="button" value="Deal Card" id="deal" />
+  
+  <br />
+  <br />    
+  <br />
+  <br />  
+ 
+</body>
+
+</html>

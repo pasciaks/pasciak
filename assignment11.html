@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <title>Advisor</title>
+
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- include external css for my bootstrap -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <!-- include external js source files for jquery -->
+  <script src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+
+  <!-- include external js source files for bootstrap -->
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <!-- include external css for my styles -->
+  <link rel="stylesheet" type="text/css" href="./css/main_style.css">
+  
+  <style>
+    
+input:enabled + label {
+  margin: 20px auto;
+  background: rgb(255, 255, 0);
+}
+
+input:disabled + label {
+  opacity: 0.5;
+  background: rgb(255, 0, 0);
+}
+
+input[type="checkbox"]:checked + label {
+  background: rgb(153, 204, 102);
+  font-weight: bold;
+}
+
+input:enabled + span {
+  margin: 20px auto;
+  background: rgb(255, 255, 0);
+}
+
+input:disabled + span {
+  opacity: 0.5;
+  background: rgb(255, 0, 0);
+}
+
+input[type="checkbox"]:checked + span {
+  background: rgb(153, 204, 102);
+  font-weight: bold;
+}
+
+td {
+    vertical-align: top;
+    width:50%;
+}
+
+#chart {
+  width:100%;
+}
+    
+    
+  </style>
+
+  <script>
+  
+  var TESTDATA = [{
+    "Course": "MAC1105",
+    "Name": "College Algebra"
+  }, {
+    "Course": "MAC1114",
+    "Name": "Trigonometry",
+    "ORPreReq":  ["COP1000", "ENC1101"]
+  }, {
+    "Course": "MAC1140",
+    "Name": "PreCalculus",
+    "PreReq": ["MAC1105","ENC1101"]
+  }, {
+    "Course": "MAC2311",
+    "Name": "Calculus",
+    "PreReq": ["MAC1105", "MAC1114"],
+    "ORPreReq":  ["ABC123", "XYZ567"]
+  }, {
+    "Course": "ABC123",
+    "Name": "Discrete",
+  }, {
+    "Course": "XYZ567",
+    "Name": "Analaysis",
+  }, {
+    "Course": "COP1000",
+    "Name": "Principles of Programming"
+  }, {
+    "Course": "ENC1101",
+    "Name": "Composition",
+  }];
+      
+  var courselist = [{
+    "Course": "CET1600",
+    "Name": "NETWORK PLUS"
+  }, {
+    "Course": "COP2220",
+    "Name": "Unlisted no longer offered Course",
+    "PreReq": ["COP1000"]
+  }, {
+    "Course": "COP2001",
+    "Name": "Unlisted no longer offered Course",
+    "PreReq": ["COP1000"]
+  }, {
+    "Course": "CTS1851",
+    "Name": "Internet Web Foundations (HTML, CSS)"
+  }, {
+    "Course": "COP2700",
+    "Name": "Introduction to Database Management"
+  }, {
+    "Course": "CTS2431C",
+    "Name": "Data Organization and Management and Lab"
+  }, {
+    "Course": "COP1000",
+    "Name": "Principles of Computer Programming"
+  }, {
+    "Course": "COP2360",
+    "Name": "C# Programming",
+    "PreReq": ["COP1000"]
+  }, {
+    "Course": "COP2800",
+    "Name": "Computer Programming 'Java'",
+    "PreReq": ["COP1000"]
+  }, {
+    "Course": "COP2949",
+    "Name": "Cooperative Educational Experience in Computer Programming"
+  }, {
+    "Course": "EGS1000",
+    "Name": "Professional Performance for Technicians"
+  }, {
+    "Course": "CEN2002",
+    "Name": "Software Design and Development I ",
+    "PreReq": ["COP2800"],
+    "ORPreReq": ["COP2220", "COP2001", "COP2700"]
+  }, {
+    "Course": "CET2154",
+    "Name": "A+ Computer Repair"
+  }, {
+    "Course": "CAP2023",
+    "Name": "Introduction to Game Programming ",
+    "PreReq": ["COP1000"]
+  }, {
+    "Course": "CGS2100",
+    "Name": "Microcomputer Applications"
+  }, {
+    "Course": "COP2842",
+    "Name": "Web Scripting (PHP)",
+    "PreReq": ["COP1000", "CTS1851"]
+  }, {
+    "Course": "CGS2821",
+    "Name": "Advanced Web Programming (XML, ASP.Net, SQL Server)",
+    "PreReq": ["CGS2820", "COP1000", "CTS1851"]
+  }, {
+    "Course": "CGS2820",
+    "Name": "Web Programming (JavaScript, Ajax, ASP.Net) ",
+    "PreReq": ["CTS1851"],
+    "ORPreReq": ["COP1000", "COP1000-I"]
+  }, {
+    "Course": "COP1000-I",
+    "Name": "COP1000 In Progress Co-Req"
+  }, {
+    "Course": "CIS2350",
+    "Name": "Principles of Information Assurance  ",
+    "PreReq": ["CET1600"]
+  }];
+
+function createList() {
+
+  for (var i = 0; i < courselist.length; i++) {
+    
+    console.log(i);
+    if (courselist[i].PreReq) console.log(JSON.stringify(courselist[i].PreReq));
+    if (courselist[i].ORPreReq) console.log(JSON.stringify(courselist[i].ORPreReq));
+
+    var _disabled = true;
+    if (courselist[i].PreReq == null) {
+    	if (courselist[i].ORPreReq == null) {
+     		_disabled = false;
+    	}
+    }
+
+    addCheckbox(courselist[i].Name, courselist[i].Course, _disabled, courselist[i].ORPreReq,courselist[i].PreReq);
+  }
+}
+
+function addCheckbox(_name, _id, _disabled, _or, _and) {
+
+  var container = $('#box');
+
+  $('<input />', {
+    type: 'checkbox',
+    id: _id,
+    value: _name,
+    disabled: _disabled,
+    class: 'checkbox'
+  }).appendTo(container);
+  
+  //--------------------------------------------------------------------
+
+  $('<span />', {
+    'for': _id,
+    text: _id + ' ' + _name  
+  }).appendTo(container);
+  
+  //---------------------------------------------------------------------
+  
+  
+  if (_or) {
+  $('<span />', {
+    id: 'ANY'+_id,
+    html: '<br />requires ANY of these : ' + JSON.stringify(_or)  
+  }).appendTo(container);  
+  }
+  
+  if (_and) {
+  $('<span />', {
+    id: 'ALL'+_id,
+    html: '<br />requires ALL of these : ' + JSON.stringify(_and)  
+  }).appendTo(container);    
+  }
+
+}
+
+
+
+function pr(course, index) {
+  // course is the course in question
+
+  var checked = true;
+
+  // preReqArray  is the array of pre-requisites
+  //var courseId = course.Course;
+  //var preReqArray = course.PreReq;
+  //var ORpreReqArray = course.ORPreReq;
+
+ // if (preReqArray == null) return;
+ 
+  // Goes through the list of pre-requisites
+  // to see if each one is met if any are not met
+  // then pre-requisites are not met
+  
+  var checkOR = true;
+  var checkAND = true;
+  
+  if  (course.PreReq == null) checkAND = false;
+  if  (course.ORPreReq == null) checkOR = false;
+  
+      $('#'+"ANY"+course.Course).css('color','RED');
+      
+  if (checkOR==true) {
+    
+    var areAnyChecked = false;
+
+    //check for OR requirements
+    for (var i = 0; i < course.ORPreReq.length; i++) {
+      if (isChecked(course.ORPreReq[i])) {
+        areAnyChecked = true;
+        $('#'+"ANY"+course.Course).css('color','GREEN');
+      }
+    }
+    //IF none of the OR requirements are checked
+    if (!areAnyChecked) checked = false; 
+   }
+   
+   $('#'+"ALL"+course.Course).css('color','RED');   
+    
+  if (checkAND==true) {
+    $('#'+"ALL"+course.Course).css('color','GREEN');
+    //check for AND requirements
+    for ( i = 0; i < course.PreReq.length; i++) {
+      if (!isChecked(course.PreReq[i])) {
+        checked = false;
+        $('#'+"ALL"+course.Course).css('color','RED');
+      }
+    }
+  }  
+  
+  if (checked) {
+    Enable(course.Course);
+  }
+  else {
+    Disable(course.Course);   
+  }
+}
+
+function CC() {
+  
+  // Check courses
+  
+  console.log("CC");
+  
+  var obj;
+  
+  for (var i = 0; i < courselist.length; i++) {
+    
+    console.log(i);
+
+    console.log(courselist[i].Course + " " + courselist[i].Name + " " + courselist[i].PreReq + " " + courselist[i].ORPreReq);
+    
+    if (courselist[i].PreReq) console.log(JSON.stringify(courselist[i].PreReq));
+    if (courselist[i].ORPreReq) console.log(JSON.stringify(courselist[i].ORPreReq));
+
+  }  
+  
+  courselist.forEach(pr); 
+  
+}
+
+function isChecked(item) {
+  return (document.getElementById(item).checked == true);
+}
+
+function Enable(selection) {
+  document.getElementById(selection).disabled = false;
+}
+
+function Disable(selection) {
+  document.getElementById(selection).checked = false;
+  document.getElementById(selection).disabled = true;
+}  
+  
+     /*global $*/
+    $(document).ready(function() {
+      
+      $("#box").delegate("input", "click", function() {
+        console.log("CLICK");
+        CC();
+      });
+
+      $("#menu").load("menu.html");
+          
+      createList();
+      
+      CC();
+
+    });
+  
+  </script>
+
+</head>
+
+<body>
+
+  <!-- menu loads here when document is ready -->
+  <div id="menu"></div>
+  
+  <h3>Computer Programming</h3>
+  
+  <p>
+    A.S. Certificate - Code 093800 - Catalog 2016/2017
+  </p>
+  
+  <div id="container">
+    
+  </div>
+  
+  If you have taken a class in this list - or an equivalent to the course, then click the checkbox. Available courses will automatically be enabled.
+  <br/>
+  <br/>
+  
+  <table>
+    <tr>
+      <td><img id="chart" alt="image of course requirements" src="./images/small-bsit.png"/></td>
+      <td><div id="box"></div></td>
+    </tr>
+  </table>
+  
+</body>
+
+</html>

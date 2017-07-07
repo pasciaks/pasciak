@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>Form Process</title>
+
+  <!-- include external js source files for jquery -->
+  <script src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+
+  <!-- include external css for my bootstrap -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <!-- include external js source files for bootstrap -->
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <!-- include external js source for recaptcha -->
+  <script src='//www.google.com/recaptcha/api.js'></script>
+
+  <!-- include external css for my styles -->
+  <link rel="stylesheet" type="text/css" href="./css/main_style.css">
+
+  <script>
+    /*global $*/
+    /*global location*/
+
+    //declare global variables to hold read-in uri form data
+    //these will be used to build email message 
+    var fname, lname, email, add1, add2, city, state, zip, phone, dob, msg;
+
+    function buildEmailMailTo(fname, lname, email, add1, add2, city, state, zip, phone, dob, msg) {
+
+      //Build an email message.
+
+      var theMailToMessage = "mailto:myaddress?cc=ccaddresses&bcc=bssaddresses&subject=thesubject&body=thebody";
+
+      var theMessage = fname + " " + lname + " would like to provide the following information for you." +
+        "%0D%0A%0D%0AAddress:%0D%0A" + add1 + "%0D%0A" + add2 + "%0D%0A" + city + ", " + state + "  " + zip + "%0D%0A%0D%0APhone: " + phone + "%0D%0AEmail: " + email +
+        "%0D%0ADate of Birth: " + dob;
+
+      theMessage = theMessage + "%0D%0A%0D%0A" + msg;
+
+      theMailToMessage = theMailToMessage.replace("myaddress", email);
+      theMailToMessage = theMailToMessage.replace("ccaddresses", 'sheldon@pasciak.com, shelpasc@gmail.com');
+      theMailToMessage = theMailToMessage.replace("bssaddresses", 'shelpasc@gmail.com');
+      theMailToMessage = theMailToMessage.replace("thesubject", 'Assignment #3');
+      theMailToMessage = theMailToMessage.replace("thebody", theMessage);
+
+      console.log(theMailToMessage);
+      
+      //theMailToMessage=encodeURI(theMailToMessage);
+
+      window.location = theMailToMessage;
+
+      return theMailToMessage;
+    }
+
+    function sendEmail() {
+
+      buildEmailMailTo(fname, lname, email, add1, add2, city, state, zip, phone, dob, msg);
+
+    }
+
+    function getParameterByName(name) {
+
+      var theResult = "";
+
+      //var fullURL = decodeURIComponent(location.search);
+
+      name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+      var regex = new RegExp("[\\?&]" + name + "=([^& #]*)"),
+        results = regex.exec(location.search);
+
+      theResult = results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+
+      console.log(name + " = " + theResult);
+
+      return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+
+    function readURIData() {
+
+      var output = "";
+
+      fname = getParameterByName("fname");
+      lname = getParameterByName("lname");
+      email = getParameterByName("email");
+      add1 = getParameterByName("address1");
+      add2 = getParameterByName("address2");
+      city = getParameterByName("city");
+      state = getParameterByName("state");
+      zip = getParameterByName("zip");
+      phone = getParameterByName("phone");
+      dob = getParameterByName("dob");
+      msg = getParameterByName("message");
+
+      output = "Full Name:" + fname + " " + lname + "<br />";
+      output += "Email: " + email + "<br />";
+      output += "address 1 of 1: " + add1 + "<br />";
+      output += "address 2 of 2: " + add2 + "<br />";
+      output += "City: " + city + "<br />";
+      output += "State: " + state + "<br />";
+      output += "Zip: " + zip + "<br />";
+      output += "Phone: " + phone + "<br />";
+      output += "Date Of Birth: " + dob + "<br />";
+      output += "Message: " + msg + "<br />";
+
+      $("#formInfo").html(output);
+
+    }
+
+    $(document).ready(function() {
+
+      $("#menu").load("menu.html");
+
+      console.log("Document ready...");
+
+      readURIData();
+
+    });
+  </script>
+
+</head>
+
+<body>
+
+  <!-- menu loads here when document is ready -->
+  <div id="menu"></div>
+  
+  <p id="formInfo"></p>
+
+  <input type="button" onclick="sendEmail()" id="sendEmail" value="Send" title="Send if your data is good." class="btn btn-default" />
+
+</body>
+
+</html>

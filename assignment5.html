@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <title>Spirograph</title>
+
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- include external js source files for my code -->
+  <script src="./js/ass5.js"></script>
+
+  <!-- include external css for my bootstrap -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <!-- include external js source files for jquery -->
+  <script src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+
+  <!-- include external js source files for bootstrap -->
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <!-- include external css for my styles -->
+  <link rel="stylesheet" type="text/css" href="./css/main_style.css">
+
+  <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/themes/smoothness/jquery-ui.css">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
+
+
+  <script>
+  
+    /*global $*/
+    $(document).ready(function() {
+
+      $("#menu").load("menu.html");
+
+      //note to self .... write reusable code
+
+      //todo include stats.js for frame rate
+
+      var c = document.getElementById("myCanvas");
+      var ctx = c.getContext("2d");
+
+      c.width = 1920;
+      c.height = 1080;
+      
+      var wx = 0;
+      var wy = 0;
+      var movementIndex = 0.0;
+      
+      var iv = 100;
+      var interval;
+
+      function newSpiro() {
+
+        clearWindow();
+
+        movementIndex += .275;
+
+        wx = Math.sin(movementIndex) * 100;
+        wy = Math.cos(movementIndex) * 100;
+
+        for (var i = -c.width; i < c.width; i += 250) {
+          for (var j = -c.height; j < c.height; j += 250) {
+            drawCircle(i + wx, j + wy, pastelColors(), 1 + Math.random() * 4);
+            ctx.stroke();
+          }
+        }
+
+      }
+
+      function pastelColors() {
+        var r = (Math.round(Math.random() * 127) + 127).toString(16);
+        var g = (Math.round(Math.random() * 127) + 127).toString(16);
+        var b = (Math.round(Math.random() * 127) + 127).toString(16);
+        return '#' + r + g + b;
+      }
+
+      function newColor() {
+        //return '#'+Math.floor(Math.random()*16777215).toString(16);
+        return pastelColors();
+      }
+
+      function drawCircle(xx, yy, cc, fac) {
+
+        var R = fac * Math.random() * 15 + 20;
+        var r = Math.random() * 10 + 5;
+        var O = Math.random() * 15 + 10;
+
+        var x = 0;
+        var y = 0;
+        
+        var t = 0.0;
+
+        x = (0.5 * c.width) + (R + r) * Math.cos(t) - (r + O) * Math.cos(((R + r) / r) * t);
+        y = (0.5 * c.width) + (R + r) * Math.sin(t) - (r + O) * Math.sin(((R + r) / r) * t);
+
+        ctx.beginPath();
+
+        ctx.moveTo(x + xx, y + yy);
+
+        for (t = 0; t <= 6 * Math.PI; t += .1) {
+          ctx.strokeStyle = cc;
+          x = (0.5 * c.width) + (R + r) * Math.cos(t) - (r + O) * Math.cos(((R + r) / r) * t);
+          y = (0.5 * c.width) + (R + r) * Math.sin(t) - (r + O) * Math.sin(((R + r) / r) * t);
+          ctx.lineTo(x + xx, y + yy);
+          ctx.stroke();
+        }
+
+      }
+
+      function eraseWindow() {
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, c.width, c.height);
+      }
+
+      function clearWindow() {
+        //using prototype override
+        ctx.clear();
+      }
+
+      function stopDrawing() {
+        if (interval) clearInterval(interval);
+      }
+
+      /*global CanvasRenderingContext2D*/
+      CanvasRenderingContext2D.prototype.clear = CanvasRenderingContext2D.prototype.clear || function(preserveTransform) {
+        if (preserveTransform) {
+          this.save();
+          this.setTransform(1, 0, 0, 1, 1, 1);
+        }
+
+        this.fillStyle = 'rgba(0,0,0,.25)'; //darken canvas using alpha coloring
+        this.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        if (preserveTransform) {
+          this.restore();
+        }
+      };
+
+      function startDrawing() {
+        if (interval) clearInterval(interval);
+        newSpiro();
+        interval = setInterval(function() {
+          clearWindow();
+          newSpiro();
+        }, iv);
+      }
+
+      $('#startdrawing').click(function() {
+        startDrawing();
+      });
+
+      $('#stopdrawing').click(function() {
+        stopDrawing();
+      });
+      
+      $('#erasewindow').click(function() {
+        stopDrawing();
+        eraseWindow();
+      });
+
+      $('#newSpiro').click(function() {
+        stopDrawing();
+        eraseWindow();
+        newSpiro();
+      });
+
+      $("#slider-m").slider({
+        value: 150,
+        min: 10,
+        max: 1000,
+        step: 10,
+        slide: function(event, ui) {
+          stopDrawing();
+          showAnimationSpeed(ui.value);
+          iv = ui.value;
+          startDrawing();
+        }
+      });
+      
+      function showAnimationSpeed(value) {
+        $("#slider-value-m").html("Animation Speed:" + value);
+      }
+
+      //newSpiro();
+
+      /*global startApplication*/
+      startApplication();
+      
+      showAnimationSpeed(iv);
+
+    });
+  </script>
+
+</head>
+
+<body style="background:black;">
+
+  <!-- menu loads here when document is ready -->
+  <div id="menu"></div>
+  <div class="form-inline">
+    <div class="form-group">
+      <button class="form-control" id="startdrawing">Start</button>
+      <button class="form-control" id="stopdrawing">Stop</button>
+      <button class="form-control" id="erasewindow">Clear</button>
+      <button class="form-control" id="newSpiro">New Spirograph</button>
+      <div id="slider-m"></div><p id="slider-value-m">Animation Speed: 0</p>
+      <br />
+    </div>
+  </div>
+  <canvas id="myCanvas" width="800" height="600" style="background:#000;">
+  Your browser does not support the HTML5 canvas tag.
+  </canvas>
+
+</body>
+
+</html>

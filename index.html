@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <title>Web Systems</title>
+
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta property="og:title" content="pasciak.com" />
+  <meta property="og:description" content="Personal/professional website to showcase my abilities" />
+  <meta property="og:image" content="http://pasciak.com" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="http://pasciak.com" />
+  <meta property="og:site_name" content="pasciak.com" />
+
+
+  <!-- include external js source files for my code -->
+  <script src="./js/base_code.js"></script>
+
+  <!-- include external css for my bootstrap -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <!-- include external js source files for jquery -->
+  <script src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+
+  <!-- include external js source files for bootstrap -->
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <!-- include external css for my styles -->
+  <link rel="stylesheet" type="text/css" href="./css/main_style.css">
+
+  <script>
+    /*global $*/
+    $(document).ready(function() {
+      
+      /*global navigator*/
+      
+      var isMobile = {
+          Android: function() {
+              return navigator.userAgent.match(/Android/i);
+          },
+          BlackBerry: function() {
+              return navigator.userAgent.match(/BlackBerry/i);
+          },
+          iOS: function() {
+              return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+          },
+          Opera: function() {
+              return navigator.userAgent.match(/Opera Mini/i);
+          },
+          Windows: function() {
+              return navigator.userAgent.match(/IEMobile/i);
+          },
+          any: function() {
+              return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+          }
+      };      
+    
+      if( isMobile.any() ) console.log('Mobile');
+
+      $("#menu").load("menu.html");
+
+      console.log("ready...");
+
+      /*global startApplication*/
+      startApplication();
+
+    });
+  </script>
+
+</head>
+
+<body>
+
+  <!-- menu loads here when document is ready -->
+  <div id="menu"></div>
+
+  <div class="container">
+
+    <h3>Created by: Sheldon Pasciak</h3>
+    <hr />
+
+
+  </div>
+  
+  <script type="text/javascript" src="//ra.revolvermaps.com/0/0/7.js?i=0k68thbocic&amp;m=0&amp;c=ff0000&amp;cr1=ffffff&amp;sx=0" async="async"></script>
+
+</body>
+
+</html>

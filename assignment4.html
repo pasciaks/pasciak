@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <title>Plotting Calculator</title>
+
+    <meta charset="utf-8">
+
+    <!-- include external js source files for jquery -->
+    <script src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+
+    <script type='text/javascript' src="//code.highcharts.com/highcharts.js"></script>
+
+    <script type='text/javascript' src="//code.highcharts.com/modules/exporting.js"></script>
+
+    <!-- include external css for my bootstrap -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- include external js source files for bootstrap -->
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- include external css for my styles -->
+    <link rel="stylesheet" type="text/css" href="./css/main_style.css">
+
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/themes/smoothness/jquery-ui.css">
+
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
+
+    <script type="text/javascript">
+
+        /*global $*/
+        $(document).ready(function() {
+
+            $("#menu").load("menu.html");
+
+            var n = 0;
+            var m = 1;
+            var b = 2;
+
+            var minRange = -10; //preset range min
+            var maxRange = 10; //preset range max
+
+            var x = new Array();
+            var y = new Array();
+            var v = new Array();
+
+            $("#slider-range").slider({
+                range: true,
+                min: -100,
+                max: 100,
+                values: [minRange, maxRange],
+                slide: function(event, ui) {
+                    minRange = ui.values[0];
+                    maxRange = ui.values[1];
+                    $("#amount").val(ui.values[0] + " to " + ui.values[1]);
+                    //calculate();
+                    plotValues();
+                }
+            });
+
+            $("#amount").val($("#slider-range").slider("values", 0) + " to " + $("#slider-range").slider("values", 1));
+
+            $("#slider-m").slider({
+                value: m,
+                min: -100,
+                max: 100,
+                step: 1,
+                slide: function(event, ui) {
+                    //$("#slider-value-m").html(ui.value);
+                    m = ui.value;
+                    createTitleLine(m, b);
+                    plotValues();
+                }
+            });
+
+            $("#slider-b").slider({
+                value: b,
+                min: -100,
+                max: 100,
+                step: 1,
+                slide: function(event, ui) {
+                    //$("#slider-value-b").html(ui.value);
+                    b = ui.value;
+                    createTitleLine(m, b);
+                    plotValues();
+                }
+            });
+
+            $("#slider-value-m").html($('#slider-m').slider('value'));
+            $("#slider-value-b").html($('#slider-b').slider('value'));
+
+            function calculateY(m, x, b) {
+                return m * x + b;
+            }
+
+            function calculate() {
+			
+			output.innerHTML = "";
+
+                var xt = 0;
+                var i = 0;
+                for (xt = minRange; xt <= maxRange; xt++) {
+                    x[i] = xt;
+                    y[i] = calculateY(m, xt, b);
+                    v[i] = [x[i], y[i]];
+                    i++;
+                }
+                n = i - 1; 
+            }
+
+            function displayValues() {
+                
+                //requires a calculate first
+
+                $('#container').fadeOut(500);
+
+                var s = "<br />Values Calculated, click Plot to show a Chart.<br /><br />";
+
+                if (b > 0) s += "y=" + m + "*x+ " + b + "<br /><br />";
+                if (b < 0) s += "y=" + m + "*x" + b + "<br /><br />";
+                if (b == 0) s += "y=" + m + "*x<br /><br />";
+
+                for (var i = 0; i <= n; i++) {
+                    s += "x=" + x[i] + ", y=" + y[i] + "<br />";
+                }
+
+                /*global output */
+                output.innerHTML = s;
+            }
+
+            function createTitleLine(m, b) {
+                if (b > 0) $('#titleLine').html("y=" + m + "*x+" + b + " ==> Slope=" + m + " Intercept=" + b);
+                if (b == 0) $('#titleLine').html("y=" + m + "*x" + " ==>  Slope=" + m + " Intercept=" + b);
+                if (b < 0) $('#titleLine').html("y=" + m + "*x" + b + " ==>  Slope=" + m + " Intercept=" + b);
+            }
+
+            function plotValues() {
+
+                $('#container').fadeIn(500);
+
+                x = new Array();
+                y = new Array();
+                v = new Array();
+
+                calculate();
+
+                /*global Highcharts*/
+                var chart = new Highcharts.Chart({
+                    chart: {
+                        renderTo: 'container',
+                        type: 'line', //line
+                        marginRight: 50,
+                        marginBottom: 50
+                    },
+                    title: {
+                        text: 'Line Equation',
+                        x: 0 // center (so -20 is off center left)
+                    },
+                    xAxis: {
+                        title: {
+                            text: '(x)'
+                        }
+                    },
+                    yAxis: {
+                        title: {
+                            text: '(y)'
+                        }
+                    },
+
+                    plotOptions: {
+                        scatter: {
+                            marker: {
+                                radius: 2.5,
+                                states: {
+                                    hover: {
+                                        enabled: true,
+                                        lineColor: 'rgb(25,25,25)'
+                                    }
+                                }
+                            },
+                            states: {
+                                hover: {
+                                    marker: {
+                                        enabled: false
+                                    }
+                                }
+                            }
+                        }
+                    },
+
+                    series: [{
+                        name: '(x)',
+                        color: 'rgba(223, 83, 83, .95)',
+                        data: v
+                    }]
+                });
+            }
+
+            $('#calculate').click(function() {
+                calculate();
+                displayValues();
+            });
+
+            $('#plot').click(function() {
+               //note a call to calculate() occurs in plotValues()                
+                plotValues();
+            });
+
+            //initial document ready
+            createTitleLine(m, b);
+            plotValues();
+
+        }); 
+        
+    </script>
+
+</head>
+
+<body>
+
+    <!-- menu loads here when document is ready -->
+    <div id="menu"></div>
+
+    <h3>Plotting Calculator for a Line ( y = m * x + b )</h3>
+
+    <p><a href="http://jsfiddle.net/sheldon_pasciak/72uujuc6/" target="_blank">JS Fiddle for Assignment #4</a> &nbsp;  &nbsp; 
+    <a href="./assignment4b.html" target="_blank">Different Equation</a></p>
+
+    <p id="titleLine">Equation of a line ( y = m * x + b )</p>
+
+    <p>Use the slider to set the slope value (m)</p>
+    <div id="slider-m"></div>
+
+    <p>Use the slider to set the intercept value (b)</p>
+    <div id="slider-b"></div>
+
+    <p><label for="amount">Use the left & right slider buttons to adjust the Chart Range:</label>
+    <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+    </p>
+
+    <div id="slider-range"></div>
+
+    <br />
+
+    <input type="button" value="Calculate" id="calculate" />
+
+    <input type="button" value="Plot" id="plot" />
+
+    <div id="container" style="min-width: 300px; height: 300px; margin: 0 auto"></div>
+
+    <p id="output"></p>
+
+</body>
+
+</html>

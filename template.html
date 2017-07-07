@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <title>TEMPLATE</title>
+
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- include external css for my bootstrap -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <!-- include external js source files for jquery -->
+  <script src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+
+  <!-- include external js source files for bootstrap -->
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <!-- include external css for my styles -->
+  <link rel="stylesheet" type="text/css" href="./css/main_style.css">
+
+  <script>
+  
+    function distance(a, b, c, d) {
+    var resultValue = Math.sqrt((Math.abs(a - c) ^ 2) + (Math.abs(b - d) ^ 2));
+    return resultValue;
+    }
+    
+    function randRange(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+    }  
+  
+     /*global $*/
+    $(document).ready(function() {
+
+        $("#menu").load("menu.html");
+        
+        //alert("random number between 2 and 99 " + randRange(2,99));
+        
+        //alert("distance between 2,2 and 13,3 " + distance(2,2,13,3));
+    
+    });
+  
+  </script>
+
+</head>
+
+<body>
+
+  <!-- menu loads here when document is ready -->
+  <div id="menu"></div>
+  
+  <P>TEMPLATE</P>
+  
+</body>
+
+</html>

@@ -1,0 +1,59 @@
+#mainImage {
+    width: 75px;
+    height: 75px;
+}
+
+#myImage {
+    width: 75px;
+    height: 75px;
+}
+
+#canvas {
+    width:100%;
+    height:100%;
+}
+
+#slider-value-m {
+    color:white;
+    font:18pt verdana;
+}
+
+/* class infoBox used in about.html */
+
+.infoBox {
+   float: left;
+   margin: 10px;
+   
+   max-width: 300px;
+   height: 300px;
+   
+}
+
+table, th , td  {
+    border: 1px solid grey;
+    border-collapse: collapse;
+    padding: 5px;
+}
+table tr:nth-child(odd) {
+    background-color: #f1f1f1;
+}
+table tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+#scrambled {
+    font:24pt verdana;
+    color:black;
+}
+
+#newScramble {
+    width:200px;
+    height:30px;
+    border:2px solid green;
+}
+
+#newScramble:hover {
+    width:200px;
+    height:30px;
+    border:2px solid gold;
+}

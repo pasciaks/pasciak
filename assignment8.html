@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <title>Class Project Information</title>
+
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- include external css for my bootstrap -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <!-- include external js source files for jquery -->
+  <script src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+
+  <!-- include external js source files for bootstrap -->
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <!-- include external css for my styles -->
+  <link rel="stylesheet" type="text/css" href="./css/main_style.css">
+  
+  <script>
+  
+  /*
+   
+  */
+  
+  function distance(a, b, c, d) {
+  var resultValue = Math.sqrt((Math.abs(a - c) ^ 2) + (Math.abs(b - d) ^ 2));
+  return resultValue;
+  }
+  
+  function randRange(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+  }    
+  
+	function myTileObject(x,y,w,h,imgUrl,tx,ty,dx,dy) {
+	  
+	  this.x=x ;
+	  this.y=y ;
+	  this.w=w ;
+      this.h=h ;
+    
+    this.imgUrl = imgUrl || "./images/me-dam.jpg";
+    this.tx=tx ;
+    this.ty=ty ;
+    this.dx=dx ;
+    this.dy=dy ;
+    
+    this.angle=0;
+     
+	    this.lastTimeMoved = (new Date()).getTime();
+	    this.born = (new Date()).getTime();
+	  
+	    this.angle = 0;
+	    this.thecolor = '#'+Math.floor(Math.random()*16777215).toString(16);
+	    
+	    return this;
+	}
+	
+		myTileObject.prototype.move = function () {
+	    this.x += this.dx;
+	    this.y += this.dy;
+	    
+	    if (this.x<0) this.x+=Math.random()*500;
+	    if (this.y<0) this.y+=Math.random()*500;
+	    if (this.x>500) this.x-=Math.random()*500;
+	    if (this.y>500) this.y-=Math.random()*500;
+	    
+	    this.lastTimeMoved = (new Date()).getTime();
+	}	;
+	
+		myTileObject.prototype.moveObject = function (dx, dy) {
+	    this.x += dx;
+	    this.y += dy;
+	    this.lastTimeMoved = (new Date()).getTime();
+	};
+	
+	myTileObject.prototype.draw = function (currentTime, ctx) {
+	    
+        if (this.angle > 0) {
+            var tx = this.locationX + this.sizeX / 2; 
+            var ty = this.locationY + this.sizeY / 2;          
+            ctx.save();          
+            ctx.translate(tx, ty);
+            ctx.rotate(this.angle);
+            ctx.translate(-tx, -ty);
+        }
+
+	    
+	    ctx.fillStyle=this.thecolor;//'#'+Math.floor(Math.random()*16777215).toString(16);
+	    ctx.fillRect(this.x,this.y,this.w,this.h);
+ 
+
+        if (this.angle > 0) {
+            ctx.restore();
+        }
+
+
+	}	
+  
+     /*global $*/
+    $(document).ready(function() {
+
+        $("#menu").load("menu.html");
+
+    });
+  
+  </script>
+
+</head>
+
+<body>
+
+  <!-- menu loads here when document is ready -->
+  <div id="menu"></div>
+  
+  <div id="desc">
+      
+    <p class="form-control">Assignment #8 : Identification of our client and class project.</p>
+    
+    <p class="form-control">Team: PUBLIC PUZZLE</p>
+    <p class="form-control">Members: Brendan Tackney, Sheldon Pasciak</p>
+    <p class="form-control">Client: Professor B. Kurtz, Daytona State College</p>
+    <p class="form-control"><a href="http://publicpuzzle.org" target="_blank">PRODUCTION Website: http://publicpuzzle.org</a></p>
+    <p class="form-control"><a href="https://publicpuzzle-pasciaks.c9users.io/" target="_blank">DEVELOPMENT Website: https://publicpuzzle-pasciaks.c9users.io</a></p>
+    <p class="form-control"><a href="./websystems1project.pdf" target="_blank">Reference: Project Information</a></p>
+  </div>
+
+</body>
+
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Form Validation</title>
+
+    <!-- include external js source files for jquery -->
+    <script src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+
+    <!-- include external css for my bootstrap -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- include external js source files for bootstrap -->
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- include external js source for recaptcha -->
+    <script src='//www.google.com/recaptcha/api.js'></script>
+
+    <!-- include external css for my styles -->
+    <link rel="stylesheet" type="text/css" href="./css/main_style.css">
+
+    <script>
+        /*global $*/
+
+        function fillDefaults() {
+            console.log('Filling default values...');
+            document.forms["myForm"]["fname"].value = 'Sheldon';
+            document.forms["myForm"]["lname"].value = 'Pasciak';
+            document.forms["myForm"]["address1"].value = '236 N Somewhere';
+            document.forms["myForm"]["address2"].value = 'APT 1';
+            document.forms["myForm"]["city"].value = 'Daytona Beach';
+            document.forms["myForm"]["state"].value = 'FL';
+            document.forms["myForm"]["zip"].value = '32118';
+            document.forms["myForm"]["dob"].value = '1969-02-15';
+            document.forms["myForm"]["phone"].value = '333-333-3333';
+            document.forms["myForm"]["email"].value = 'sheldon@pasciak.com';
+            document.forms["myForm"]["message"].value = 'Good job Sheldon, you get 10 points!';
+        }
+
+        function clearForm() {
+            console.log('Clearing values...');
+            document.forms["myForm"]["fname"].value = '';
+            document.forms["myForm"]["lname"].value = '';
+            document.forms["myForm"]["address1"].value = '';
+            document.forms["myForm"]["address2"].value = '';
+            document.forms["myForm"]["city"].value = '';
+            document.forms["myForm"]["state"].value = 'FL';
+            document.forms["myForm"]["zip"].value = '';
+            document.forms["myForm"]["dob"].value = '';
+            document.forms["myForm"]["phone"].value = '';
+            document.forms["myForm"]["email"].value = '';
+            document.forms["myForm"]["message"].value = '';
+        }
+
+        //returns true or false based on getcaptcha element
+        function validCaptcha() {
+
+            //after grading reverted this out
+
+            return true;
+
+            /*global grecaptcha*/
+            var response = grecaptcha.getResponse();
+            console.log("Calling grecaptcha.getResponse...");
+
+            //alert("Validating Captcha Response: (" + JSON.stringify(response) + ")");
+
+            //note: if success==false, the robot-captcha control has not been satisfied.
+            if (response) {
+                console.log("Success from RECAPTCHA element!");
+                return true;
+            }
+            else {
+
+                console.log("Failure from RECAPTCHA element!");
+                alert("Are you a robot? Please see the RECAPTCHA element!");
+
+                // if (prompt("Woud you like to override the Captcha fail ?","Y")=="Y") return true;
+
+                return false;
+            }
+
+        }
+
+        function isFieldEmpty(value, label) {
+            if (value == null || value == "") {
+                alert("Please enter a value for " + label);
+                return true;
+            }
+            return false;
+        }
+
+        function validDateRange(field, mind, maxd) {
+
+            console.log("Validating dates for " + field + " = " + document.forms["myForm"][field].value + " ...");
+
+            var d = document.forms["myForm"][field].value;
+
+            //note: I used this to verify valid date or not just incase variable hacking in console adjusts form value??
+            //d="";
+
+            var d_as_date = Date.parse(d); // mind is text in format YYYY-MM-DD
+            var minDate = Date.parse(mind); // mind is text in format YYYY-MM-DD
+            var maxDate = Date.parse(maxd); // maxd is text in format YYYY-MM-DD
+
+            console.log(mind + " " + minDate + "   " + d + " " + d_as_date + "   " + maxDate + " " + maxd);
+
+            //somehow couldn't create a good date.
+            if (d_as_date == null) {
+                alert("Could not evaluate the Date. (" + field + ") Please use the format YYYY-MM-DD");
+                return false;
+            }
+
+            if (isNaN(d_as_date)) {
+                alert("Could not evaluate the Date. (" + field + ") Please use the format YYYY-MM-DD");
+                document.forms["myForm"][field].value = "";
+                return false;
+            }
+
+            if ((d_as_date < minDate) || (d_as_date > maxDate)) {
+                alert("The date is out of REASONABLE range. \n\n" + mind + " < " + d + " < " + maxd);
+                return false;
+            }
+            else {
+                //  alert("The date IS WITHIN range. \n\n" + mind + " < " +  d + " < " + maxd);
+            }
+
+            return true;
+
+        }
+
+        function passRegex(field, regexCode) {
+            var value = document.forms["myForm"][field].value;
+            var regX = new RegExp(regexCode);
+            //console.log(value);
+            //console.log(regexCode);
+            //console.log(regX.test(value));
+            console.log("Regex Evaluating:" + field);
+
+            if (!(regX.test(value))) alert("Form Validation Fail: " + field);
+
+            return regX.test(value);
+        }
+
+        function validateForm() {
+
+            var regFirstName = '^[^%<=>0123456789^&*$]{2,75}$';
+            var regLastName = '^[^%<=>0123456789^&*$]{2,75}$';
+            var regAdd1 = '^[^%<=>^&*$]{2,125}$';
+            var regAdd2 = '^[^%<=>^&*$]{0,20}$';
+            var regCity = '^[^%<=>^&*$]{2,125}$';
+            var regZip = '^[0-9]{5}(?:-[0-9]{4})?$'; //^\d{5}(?:[-\s]\d{4})?$';
+            var regPhone = '^[0-9]{3}-[0-9]{3}-[0-9]{4}$';
+            var regEmail = '^[a-z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)?@[a-z][a-zA-Z-0-9]*\.[a-z]+(\.[a-z]+)?$';
+
+            if (!passRegex('fname', regFirstName)) return false;
+            if (!passRegex('lname', regLastName)) return false;
+            if (!passRegex('address1', regAdd1)) return false;
+            if (!passRegex('address2', regAdd2)) return false;
+            if (!passRegex('city', regCity)) return false;
+
+            //state is a selection and needs no regex
+
+            if (!passRegex('zip', regZip)) return false; //TODO: relook regex for zip
+
+            if (!passRegex('phone', regPhone)) return false; //TODO: relook regex for phone
+
+            if (!passRegex('email', regEmail)) return false;
+
+            console.log("Checking DOB for range between 1916-01-01 and 2016-01-01");
+            if (!(validDateRange('dob', '1916-01-01', '2016-01-01'))) return false;
+
+            var msg = document.forms["myForm"]["message"].value;
+            if (isFieldEmpty(msg, "Free Text Message")) return false;
+
+            //check for valid CAPTCHA response to ensure a person is using the site and not a robot    
+            if (!validCaptcha()) return false;
+
+            //alert("Form Validation Success!");
+
+            console.log("Form Validation Success!");
+
+            return true;
+
+        }
+
+        $(document).ready(function() {
+
+            $("#menu").load("menu.html");
+
+            console.log("Document ready...");
+
+        });
+    </script>
+
+</head>
+
+<body>
+
+    <div id="menu"></div>
+
+    <form class="form-horizontal" style="font:18pt Verdana" name="myForm" onsubmit="return validateForm()" action="assignment3-get.html">
+
+        <label>First name:<input  class="form-control"type="text" class="form-control" name="fname" tabindex="1" pattern="^[^%<=>0123456789^&*$]{2,75}$" placeholder="Enter your first name" title="Name must be from 2 to 75 characters and not contain '%<=>0123456789^&*'$" autofocus required /></label>
+        <br />
+        <label>Last name: <input class="form-control" type="text" class="form-control" name="lname" tabindex="2" pattern="^[^%<=>0123456789^&*$]{2,75}$" placeholder="Enter your last name" title="Name must be from 2 to 75 characters and not contain '%<=>0123456789^&*'$" required /></label>
+        <br />
+        <label>Street address:<input class="form-control" type="text" class="form-control" name="address1" tabindex="3" pattern="^[^%<=>^&*$]{2,125}$" placeholder="Enter your street address" required /></label>
+        <br />
+        <label>Apt or Suite:<input class="form-control" type="text" class="form-control" name="address2" tabindex="4" pattern="^[^%<=>^&*$]{0,20}$" placeholder="Enter your unit number"/></label>
+        <br />
+        <label>City:<input class="form-control" type="text" class="form-control" name="city" tabindex="5" pattern="^[^%<=>^&*$]{2,125}$" placeholder="Enter your city" required /></label>
+        <br />
+        <label for="state">State:</label>
+        <select class="form-control" name="state" id="state" tabindex="6">
+					<option value="AL">Alabama</option>
+					<option value="AK">Alaska</option>
+					<option value="AZ">Arizona</option>
+					<option value="AR">Arkansas</option>
+					<option value="CA">California</option>
+					<option value="CO">Colorado</option>
+					<option value="CT">Connecticut</option>
+					<option value="DE">Delaware</option>
+					<option value="DC">District of Columbia</option>
+					<option value="FL">Florida</option>
+					<option value="GA">Georgia</option>
+					<option value="HI">Hawaii</option>
+					<option value="ID">Idaho</option>
+					<option value="IL">Illinois</option>
+					<option value="IN">Indiana</option>
+					<option value="IA">Iowa</option>
+					<option value="KS">Kansas</option>
+					<option value="KY">Kentucky</option>
+					<option value="LA">Louisiana</option>
+					<option value="ME">Maine</option>
+					<option value="MD">Maryland</option>
+					<option value="MA">Massachusetts</option>
+					<option value="MI">Michigan</option>
+					<option value="MN">Minnesota</option>
+					<option value="MS">Mississippi</option>
+					<option value="MO">Missouri</option>
+					<option value="MT">Montana</option>
+					<option value="NE">Nebraska</option>
+					<option value="NV">Nevada</option>
+					<option value="NH">New Hampshire</option>
+					<option value="NJ">New Jersey</option>
+					<option value="NM">New Mexico</option>
+					<option value="NY">New York</option>
+					<option value="NC">North Carolina</option>
+					<option value="ND">North Dakota</option>
+					<option value="OH">Ohio</option>
+					<option value="OK">Oklahoma</option>
+					<option value="OR">Oregon</option>
+					<option value="PA">Pennsylvania</option>
+					<option value="RI">Rhode Island</option>
+					<option value="SC">South Carolina</option>
+					<option value="SD">South Dakota</option>
+					<option value="TN">Tennessee</option>
+					<option value="TX">Texas</option>
+					<option value="UT">Utah</option>
+					<option value="VT">Vermont</option>
+					<option value="VA">Virginia</option>
+					<option value="WA">Washington</option>
+					<option value="WV">West Virginia</option>
+					<option value="WI">Wisconsin</option>
+					<option value="WY">Wyoming</option>
+				</select>
+        <br />
+        <label>Zip:<input type="text" class="form-control" name="zip" tabindex="7" pattern="^\d{5}-\d{4}$|^\d{5}$" placeholder="Zip (##### or #####-####) " title="##### or #####-####" required /></label>
+        <br />
+        <label>Phone number:<input type="tel" class="form-control" name="phone" tabindex="8" size="50" placeholder="###-###-####" pattern="^\d{3}-\d{3}-\d{4}$" title="Include area code: ###-###-####" required /></label>
+        <br />
+        <label>Your e-mail:<input type="email" class="form-control" name="email" tabindex="9" placeholder="you@somewhere.com" required /></label>
+        <br />
+        <label>DOB:<input type="date" class="form-control" name="dob" tabindex="10" title="Java Validation Allowed Dates: 1916-01-01 - 2016-01-01 -- Form Allowed 1800-01-01 - 2320-01-01" min="1800-01-01" max="2320-01-01" required /></label>
+        <br />
+        <label>Message:<textarea class="form-control" name="message" tabindex="11"></textarea></label>
+        <br />
+        <div hidden class="g-recaptcha" id="captcha" tabindex="12" data-sitekey="6LftpSkTAAAAAKHxOunY7B3Lz0WRSDl2VM_g6mdX"></div>
+        <br />
+        <input type="submit" tabindex="13" value="Submit" class="btn btn-default" title="Validate and Send Form" />
+    </form>
+    <br />
+    <input type="button" onclick="fillDefaults()" id="fillDefaults" value="Fill" title="Help to fill in default valid values for testing." class="btn btn-default" />
+    <br />
+    <br />
+    <input type="button" onclick="clearForm()" id="clearForm" value="Clear" title="Help to clear values for testing." class="btn btn-default" />
+    <br />
+</body>
+
+</html>

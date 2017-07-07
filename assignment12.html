@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <title>CMS ASSIGNMENT 12</title>
+
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- include external css for my bootstrap -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <!-- include external js source files for jquery -->
+  <script src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+
+  <!-- include external js source files for bootstrap -->
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <!-- include external css for my styles -->
+  <link rel="stylesheet" type="text/css" href="./css/main_style.css">
+
+  <script>
+  
+  //---------------------------------
+  
+  var currentColor=0;
+  var colors=['brown','green'];
+  
+  var cmsLibrary=[];
+  
+        function myCMS(systemName,produced,technology,capabilities,limitations,examples,reviewLink) {
+          this.reviewLink=reviewLink;
+          this.systemName=systemName;
+          this.produced=produced;
+          this.technology=technology;
+          this.capabilities=capabilities;
+          this.limitations=limitations;
+          this.examples=examples;
+          return this;
+        }
+        
+        myCMS.prototype.addp = function(str) {
+          this.produced.push(str);
+          return this;
+        };        
+
+        myCMS.prototype.addt = function(str) {
+          this.technology.push(str);
+          return this;
+        };
+        myCMS.prototype.addc = function(str) {
+          this.capabilities.push(str);
+          return this;
+        };
+        myCMS.prototype.addl = function(str) {
+          this.limitations.push(str);
+          return this;
+        };
+        myCMS.prototype.adde = function(str) {
+          this.examples.push(str);
+          return this;
+        };   
+        
+        var cms1;
+        
+        cms1=new myCMS('Wordpress',[],[],[],[],[],'http://whichcmstochoose.com/wordpress.html');
+            cms1.addp('Open source');
+            cms1.addp('Supported by most hosting companies');
+            cms1.addt('PHP/MySQL');
+            cms1.addc('Easy to use, large community, plugins, templates, menu management,non-standard fields, Supports themes');
+            cms1.addc('Supports plugins');
+            cms1.addc('Public API');
+            cms1.addl('Modification requires PHP knowledge, graphics modification requires CSS and HTML knowledge, plugins and efficiency, PHP Security, table and graphics formatting is complicated.');
+            cms1.addl('Security (plugins)');
+            cms1.addl('Security (updates)');
+            cms1.adde('https://wordpress.org/');
+            cms1.adde('https://en.wordpress.com/features/');
+            cms1.adde('https://wordpress.org/showcase/toyota-motors-brasil/');
+            cms1.adde('https://wordpress.org/showcase/chicago-sun-times/');
+
+            cmsLibrary.push(cms1);
+        
+        cms1=new myCMS('Drupal',[],[],[],[],[],'http://whichcmstochoose.com/drupal.html');
+            cms1.addp('Open source');
+            cms1.addt('PHP');
+            cms1.addc('advanced menu, polls, graphics modifications, blogs, podcast, user management, graphics management, page content management, plugins, documentation and support');
+            cms1.addl('not user friendly for installation, efficiency');            
+            cms1.adde('http://www.museumoncommunism.org/');
+            cmsLibrary.push(cms1);
+            
+        cms1=new myCMS('Hippo',[],[],[],[],[],'https://www.cmscritic.com/dir/products/hippo-cms/');
+            cms1.addp('Open source');
+            cms1.addt('Java,MySQL, Oracle, SQL Server, Ingres, PostgreSQL, JCR');
+            cms1.addc('High Scalability');
+            cms1.addc('State of the Art Targeting');            
+            cms1.addl('Bad Collaboration Tools');
+            cms1.addl('No internal ticketing');            
+            cms1.adde('https://www.onehippo.com/en');
+            cms1.adde('https://developer.amazon.com/');
+            cmsLibrary.push(cms1);
+           
+        cms1=new myCMS('Joomla',[],[],[],[],[],'http://whichcmstochoose.com/joomla.html');
+            cms1.addp('Open source');
+            cms1.addt('PHP');
+            cms1.addc('Easy to install, plugins, support, navigation, good looking URLs, advanced administration,Multilingual,easy updates,well supported,integrated help,media manager,banner manager,contact manager,built in search and smart search,tagging,menu manager,extensive ACL');
+            cms1.addc('Search keyword tracking');
+            cms1.addc('Search Engine Optimization');
+            cms1.addl('limited adjustment options, server resources and efficiency, paid plugins, plugin compatability, first contact');
+            cms1.adde('http://whichcmstochoose.com/joomla.html');
+            cms1.adde('https://www.joomla.org/core-features.html');
+            cms1.adde('https://www.cmscritic.com/joomla-review/');
+            cms1.adde('http://thehill.com/');
+            cms1.adde('https://www.linux.com/');  
+            
+            cmsLibrary.push(cms1);
+            
+        cms1=new myCMS('ModX',[],[],[],[],[],'https://www.cmscritic.com/dir/products/modx/');
+            cms1.addp('Open source');
+            cms1.addt('PHP/MySQL');
+            cms1.addc('Free, Easy to use, SEO Optimization,With MODx you can type your code and it will be displayed exactly the way you wanted it.');
+            cms1.addc('MySQL and Microsoft SQL');
+            cms1.addl('Security Vulnerabilities');
+            cms1.addl('Not designed to handle large volume of document meta-data');
+            cms1.adde('https://www.siteground.com/tutorials/modx/modx_introduction.htm');
+            cms1.adde('https://forums.modx.com/index.php/topic,18872.0.html');
+            cms1.adde('https://modx.com/');
+            cms1.adde('http://www.mademyday.de/');            
+            cmsLibrary.push(cms1);
+           
+        cms1=new myCMS('Share Point',[],[],[],[],[],'http://www.pcmag.com/article2/0,2817,2490933,00.asp');
+            cms1.addp('Microsoft');
+            cms1.addt('ASP.NET');
+            cms1.addc('Good online editing. Ability to create multiple team sites, MS Office Compatible');
+            cms1.addc('More mature as part of Office 365');
+            cms1.addl('Setting up features can be overwhelming,Speed to deployment');
+            cms1.addl('Lack of workflow flexibility');
+            cms1.adde('http://en.share-gate.com/blog/why-use-sharepoint-its-benefits-between-two-farms');            
+            cms1.adde('http://www.quickbase.com/blog/how-companies-are-overcoming-sharepoint-limitations');
+            cms1.adde('https://www.h10hotels.com/en');
+            cmsLibrary.push(cms1);
+            
+        cms1 = new myCMS('QuickCMS',[],[],[],[],[],'http://whichcmstochoose.com/quick.cms.html');
+            cms1.addp('Open Source');
+            cms1.addt('PHP');
+            cms1.addc('Installation, friendly administration, support, good SEO, efficiency and requirements, standards, mobile, shopping cart');
+            cms1.addl('Few plugins and templates, Design requires knowledge of CSS,HTML, PHP');
+            cms1.adde('http://opensolution.org/Quick.Cms/docs/');
+            cms1.adde('http://opensolution.org/home.html');
+            cmsLibrary.push(cms1);
+        
+        cms1 = new myCMS('Typo 3',[],[],[],[],[],'http://whichcmstochoose.com/typo3.html');
+            cms1.addp('Open Source');
+            cms1.addt('PHP');
+            cms1.addc('Modularity,extentions,elastic admin system,content types,support, undo, page structure, internal typoscript language');
+            cms1.addl('installation is difficult');
+            cms1.adde('http://whichcmstochoose.com/typo3.html');
+            cmsLibrary.push(cms1);
+            
+console.log(JSON.stringify(cmsLibrary));  
+  
+  //--------------------------------
+
+  function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+  
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+  
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+  
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+  
+    return array;
+  }  
+  
+  function startTable(className) {    return "<table class='" + className + "'>";  }
+  function endTable() {    return "</table>";  }
+  function startRow() {    return "<tr>";  }
+  function endRow() {    return "</tr>";  }  function addColumn(data,options) {    return "<td style='color:" + options.color + "' >" + data + "</td>";   }
+  
+  function createLinks(arr) {
+    var result="";
+    
+    for (var i=0;i<arr.length;i++) {
+      result+="<a href='" + arr[i] + "'>" + arr[i] + "</a><br />";
+    }
+    return result;
+  }
+
+     /*global $*/
+    $(document).ready(function() {
+      
+        $("#menu").load("menu.html");
+        
+        var options= {
+          'color': 'BLACK'
+        };
+        
+        var currentRowObject;
+        
+        var theCreatedTable=startTable();
+        
+        theCreatedTable+=startRow();
+          theCreatedTable+=addColumn('System Name',options);//cmsLibrary[r].systemName,options);
+          theCreatedTable+=addColumn('Produced By/Supported By',options);//cmsLibrary[r].produced,options);
+          theCreatedTable+=addColumn('Technology',options);//cmsLibrary[r].technology,options);
+          theCreatedTable+=addColumn('Capabilities',options);//cmsLibrary[r].capabilities,options);
+          theCreatedTable+=addColumn('Limitations',options);//cmsLibrary[r].limitations,options);
+          theCreatedTable+=addColumn('Links to Research/Examples',options);//cmsLibrary[r].examples,options);        
+        theCreatedTable+=endRow();
+        
+        cmsLibrary=shuffle(cmsLibrary);
+        
+        for (var r=0;r<cmsLibrary.length;r++){
+          
+          theCreatedTable+=startRow();
+          
+          options.color=colors[currentColor]; currentColor++; if (currentColor>colors.length-1) currentColor=0;
+          
+          currentRowObject=cmsLibrary[r];
+          
+          theCreatedTable+=addColumn("<a href='" +currentRowObject.reviewLink + "'>" +  currentRowObject.systemName + "</a>",options);
+          theCreatedTable+=addColumn(currentRowObject.produced,options);
+          theCreatedTable+=addColumn(currentRowObject.technology,options);
+          theCreatedTable+=addColumn(currentRowObject.capabilities,options);
+          theCreatedTable+=addColumn(currentRowObject.limitations,options);
+          theCreatedTable+=addColumn(createLinks(currentRowObject.examples),options);
+          
+          theCreatedTable+=endRow();
+        }
+        
+        theCreatedTable+=endTable();
+        
+
+        
+        $('#htmlOutput').html(theCreatedTable);
+        
+        // var theNewOutput="";
+        // for (var j=0;j<cmsLibrary.length;j++) {
+        //   theNewOutput+=JSON.stringify(cmsLibrary[j]) + "<BR />";
+        // }
+        
+        // $('#htmlOutput').html(theNewOutput);
+    
+    });
+  
+  </script>
+
+</head>
+
+<body>
+
+  <!-- menu loads here when document is ready -->
+  <div id="menu"></div>
+  
+          <H3>CMS REVIEW : Click System name for more information.</H3>
+  
+  <div id="htmlOutput"></div>
+  
+  <br />
+  <br />
+  
+</body>
+
+</html>
