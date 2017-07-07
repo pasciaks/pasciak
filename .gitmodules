@@ -10,3 +10,6 @@
 [submodule "pm7"]
 	path = pm7
 	url = git@github.com:pasciaks/pasciakModuleSeven.git
+[submodule "pm8"]
+	path = pm8
+	url = git@github.com:pasciaks/pasciakModuleEight.git
