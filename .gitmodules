@@ -1,3 +1,9 @@
 [submodule "pm4"]
 	path = pm4
 	url = git@github.com:pasciaks/pasciakModuleFour.git
+[submodule "pm5"]
+	path = pm5
+	url = git@github.com:pasciaks/pasciakModuleFive.git
+[submodule "pm6"]
+	path = pm6
+	url = git@github.com:pasciaks/pasciakModuleSix.git
